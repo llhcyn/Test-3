@@ -1,125 +1,115 @@
-# Test-3
-Experiment report 3
-package 经典增删查改;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.table.AbstractTableModel;
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {                                     
+        //获取某一行的具体值，并把它显示在文本框中
+        String no = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
+        String name = jTable1.getValueAt(jTable1.getSelectedRow(), 1).toString();
+        String ks = jTable1.getValueAt(jTable1.getSelectedRow(), 2).toString();
+        String level = jTable1.getValueAt(jTable1.getSelectedRow(), 3).toString();
+        String ghf= jTable1.getValueAt(jTable1.getSelectedRow(), 4).toString();
+        //把点击的内容显示在文本框中
+        jtfno.setText(no);
+        jtfname.setText(name);
+        jTextFieldks.setText(ks);
+        jtflevel.setText(level);
+        jtfghf.setText(ghf);
+    }                                    
 
-public class doctorInfo extends AbstractTableModel  {
-       Connection con=null;
-       PreparedStatement ps=null;
-       ResultSet rs=null;
-       Vector<Serializable> rowData,columnName;
-       public doctorInfo(String sql){
-          init( sql) ;
-       }
+    private void deletejbtActionPerformed(java.awt.event.ActionEvent evt) {                                          
+         //设置选择对话框的选项                                     
+        String[] options = {"是", "否"};
+        int answ = JOptionPane.showOptionDialog(null, "是否确认删除??", "提示", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
-       public doctorInfo(){
+        if (answ == 0) {
+            int index = jTable1.getSelectedRow();
+            String id = jTable1.getValueAt(index, 0).toString();
+            String sql="delete from doctor_info where no='"+id+"'";
 
-        }
-       public void init(String sql){
+           // 删除一条记录
+            doctorInfo df=new doctorInfo ();
+            df.delete(sql);
+            System.out.println("删除成功！！！");
 
-                //columnName保存表头信息
-               columnName=new Vector<Serializable>();
-               columnName.add("编号");
-               columnName.add("姓名");
-               columnName.add("科室");
-               columnName.add("级别");
-               columnName.add("挂号费");
+            //重新读取数据
+            String sql1="select*from doctor_info";
+            doctorInfo d=new doctorInfo (sql1);
+             jTable1.setModel(d);
 
-            //rowData向量保存每一行的信息
-            rowData=new Vector<Serializable>();
-           try {
-            con = DBConnection.getConnection();
-             ps=(PreparedStatement) con.prepareStatement( sql);
-             rs=ps.executeQuery();
-            while(rs.next()){
-                   Vector bang=new Vector();
-                   bang.add(rs.getString(1) );
-                   bang.add(rs.getString(2) );
-                   bang.add(rs.getString(3) );
-                   bang.add(rs.getString(4) );
-                   bang.add(rs.getString(5) );
+             jtfno.setText("");
+             jtfname.setText("");
+             jtflevel.setText("");
+             jtfghf.setText("");
+             jTextFieldks.setText("");
 
-                   //将读取的每一行数据添加到bang中，然后再把bang添加到rowData向量中
-                    rowData.add(bang);
+            } else 
+            {
+                JOptionPane.showMessageDialog(null, "无法删除！！！");
             }
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }finally {
-            if(con!=null&&ps!=null&rs!=null){
-                try {
-                    con.close();
-                    ps.close();
-                    rs.close();
-                } catch (SQLException e) {
+    }                                         
 
-                    e.printStackTrace();
-                }
 
-            }
-        }
-  }
-    public void chushihua(String sql){
-         Connection con=null;
-         PreparedStatement ps=null;
-        int rs;
+    private void jbtClearActionPerformed(java.awt.event.ActionEvent evt) {                                         
+         jtfno.setText("");
+         jtfname.setText("");
+         jtflevel.setText("");
+         jtfghf.setText("");
+         jTextFieldks.setText("");
+    }                                        
 
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
         try {
-            con = DBConnection.getConnection();
-             ps=(PreparedStatement) con.prepareStatement( sql);
-             rs=ps.executeUpdate();
-
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(doctorInfoGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(doctorInfoGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(doctorInfoGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(doctorInfoGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-    }   
+        //</editor-fold>
 
-    public void delete(String sql){
-        chushihua( sql);
-
-    }
-    public void Add(String sql){
-        chushihua( sql);
-
-    }
-
-    public void Update(String sql){
-        chushihua( sql);
-
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new doctorInfoGui().setVisible(true);
+            }
+        });
     }
 
-   @Override
-   public int getRowCount() {
-        return this.rowData.size();
-   }
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton Updatajbt;
+    private javax.swing.JButton deletejbt;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
 
-   @Override
-   public int getColumnCount() {
-      return this.columnName.size();
-   }
-
-   @Override
-   public Object getValueAt(int  row, int column) {
-        return  ((Vector ) this.rowData.get(row)).get(column);
-   }
-   public String getColumnName(int column) {
-
-        return   (String) this.columnName.get(column);
-    }
-  }
+    private javax.swing.JButton jbtAdd;
+    private javax.swing.JButton jbtClear;
+    private javax.swing.JButton jbtUpdata;
+    private javax.swing.JButton jbtseacher;
+    private javax.swing.JTextField jtfghf;
+    private javax.swing.JTextField jTextFieldks;
+    private javax.swing.JTextField jtflevel;
+    private javax.swing.JTextField jtfname;
+    private javax.swing.JTextField jtfno;
+    private javax.swing.JTextField jtfseacher;
+    // End of variables declaration                   
+}
